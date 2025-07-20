@@ -1,0 +1,3 @@
+[workspace]
+resolver = "3"
+members = [ "app", "define_macros","macro_traits"]
