@@ -99,3 +99,38 @@ pub fn deserialise_number_struct(input: TokenStream) -> TokenStream {
 
     generated.into()
 }
+
+#[proc_macro_derive(SumFields)]
+pub fn sum_struct_fields(input: TokenStream) -> TokenStream {
+    let ast: DeriveInput = syn::parse(input).unwrap();
+    let name = &ast.ident;
+
+    let sum_fields = match &ast.data {
+        Data::Struct(data_struct) => match &data_struct.fields {
+            Fields::Named(fields) => {
+                let field_sum = fields.named.iter().map(|field| {
+                    let field_name = &field.ident;
+                    quote! {
+                        &self.#field_name
+                    }
+                });
+
+                quote! {
+                    #(#field_sum)+*
+                }
+            }
+            _ => panic!("Only named fields are supported"),
+        },
+        _ => panic!("Only struct is supported"),
+    };
+
+    let generated = quote! {
+        impl AddFields for #name {
+            fn add_fields(&self) -> i32 {
+                #sum_fields
+            }
+        }
+    };
+
+    generated.into()
+}

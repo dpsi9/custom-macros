@@ -1,8 +1,8 @@
-use define_macros::{DeserializeNumberStruct, SerializeNumberStruct};
-use macro_traits::{Deserialize, Serialize};
+use define_macros::{DeserializeNumberStruct, SerializeNumberStruct, SumFields};
+use macro_traits::{AddFields, Deserialize, Serialize};
 use std::fmt::Error;
 
-#[derive(SerializeNumberStruct, DeserializeNumberStruct)]
+#[derive(SerializeNumberStruct, DeserializeNumberStruct, SumFields)]
 struct Swap {
     qty_1: i32,
     qty_2: i32,
@@ -16,7 +16,6 @@ fn main() {
         qty_2: 2,
         qty_3: 1000,
     };
-
     // Serialize the struct
     let bytes = s.serialize();
     println!("Serialized bytes: {:?}", bytes);
@@ -33,4 +32,7 @@ fn main() {
             println!("Failed to deserialize");
         }
     }
+
+    let ans = s.add_fields();
+    println!("{}", ans);
 }
